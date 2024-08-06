@@ -7,65 +7,43 @@ export class GildedRose {
     this.items = items;
   }
 
-  private increaseQuality(item: Item) {
-    if (item.quality < 50) {
-      item.quality++;
-    }
+  private increaseQuality(item: Item, value: number): void {
+    item.quality = Math.min(item.quality + value, 50);
   }
 
-  private decreaseQuality(item: Item) {
-    if (item.quality > 0) {
-      item.quality--;
+  private decreaseQuality(item: Item, value: number): void {
+    if (item.name.includes("Conjured")) {
+      value *= 2;
     }
+
+    item.quality = Math.max(item.quality - value, 0);
   }
 
   private updateAgedBrie(item: Item) {
-    this.increaseQuality(item);
+    this.increaseQuality(item, 1);
 
     item.sellIn--;
-
-    if (item.sellIn < 0) {
-      this.increaseQuality(item);
-    }
   }
 
   private updateBackstagePass(item: Item) {
-    this.increaseQuality(item);
+    const value = item.sellIn < 6 ? 3 : item.sellIn < 11 ? 2 : 1;
 
-    if (item.sellIn < 11) {
-      this.increaseQuality(item);
-    }
-
-    if (item.sellIn < 6) {
-      this.increaseQuality(item);
-    }
+    this.increaseQuality(item, value);
 
     item.sellIn--;
 
-    if (item.sellIn < 0) {
+    if (item.sellIn <= 0) {
       item.quality = 0;
     }
   }
 
   private updateNormalItem(item: Item) {
-    this.decreaseQuality(item);
+    this.decreaseQuality(item, 1);
 
     item.sellIn--;
 
     if (item.sellIn < 0) {
-      this.decreaseQuality(item);
-    }
-  }
-
-  private updateConjuredItem(item: Item) {
-    this.decreaseQuality(item);
-    this.decreaseQuality(item);
-
-    item.sellIn--;
-
-    if (item.sellIn < 0) {
-      this.decreaseQuality(item);
-      this.decreaseQuality(item);
+      this.decreaseQuality(item, 1);
     }
   }
 
@@ -78,10 +56,7 @@ export class GildedRose {
         this.updateBackstagePass(item);
         break;
       case "Sulfuras, Hand of Ragnaros":
-        // Sulfuras does not need updating
-        break;
-      case "Conjured":
-        this.updateConjuredItem(item);
+        item.quality = 80; //probably not needed, I left it here just in case of some bugs.
         break;
       default:
         this.updateNormalItem(item);

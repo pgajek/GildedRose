@@ -13,6 +13,16 @@ describe("Gilded Rose", () => {
       expect(items[0].quality).toBe(19);
     });
 
+    it("should degrade quality twice as fast after sell-by date", () => {
+      const items = [new Item("Normal Item", 0, 20)];
+      const gildedRose = new GildedRose(items);
+
+      gildedRose.updateQuality();
+
+      expect(items[0].sellIn).toBe(-1);
+      expect(items[0].quality).toBe(18);
+    });
+
     it("should never let quality be negative", () => {
       const items = [new Item("Normal Item", 10, 0)];
       const gildedRose = new GildedRose(items);
@@ -117,6 +127,16 @@ describe("Gilded Rose", () => {
 
       expect(items[0].sellIn).toBe(9);
       expect(items[0].quality).toBe(18);
+    });
+
+    it("should degrade quality twice as fast after sell-by date", () => {
+      const items = [new Item("Conjured Mana Cake", 0, 20)];
+      const gildedRose = new GildedRose(items);
+
+      gildedRose.updateQuality();
+
+      expect(items[0].sellIn).toBe(-1);
+      expect(items[0].quality).toBe(16);
     });
 
     it("should never let quality be negative", () => {
